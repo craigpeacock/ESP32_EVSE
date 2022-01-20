@@ -33,10 +33,10 @@ void Init_PWM(void)
 	ESP_ERROR_CHECK(mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM0A, GPIO_NUM_18));
 
     mcpwm_config_t pwm_config = {
-        .frequency = 1000,
-        .cmpr_a = 50,
-        .counter_mode = MCPWM_UP_COUNTER,
-        .duty_mode = MCPWM_DUTY_MODE_0,
+        .frequency = 1000,					// Frequency
+        .cmpr_a = 50,						// Init Duty Cycle for MCPWMXA
+        .counter_mode = MCPWM_UP_COUNTER,	// Counter Type
+        .duty_mode = MCPWM_DUTY_MODE_0,		// Active High Duty
     };
 
     mcpwm_init(MCPWM_UNIT_0, MCPWM_TIMER_0, &pwm_config);
@@ -54,17 +54,21 @@ void CP_Set(int16_t amps)
 {
     if (amps == HIGH) {
     	// Set Digital Pin High
+    	mcpwm_set_signal_high(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM0A);
         return;
     }
 
     if (amps == LOW) {
         // Set Digital Pin Low
+    	mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM0A);
         return;
     }
 
     if (amps == DIGITAL) {
         // Set Control Pilot to use Digital Communication (5% Duty Cycle)
     	mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM0A, 5);
+    	// Resume PWM Operation:
+    	mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM0A, MCPWM_DUTY_MODE_0 );
         return;
     }
 
@@ -74,10 +78,16 @@ void CP_Set(int16_t amps)
     }
 
     if ((amps >= 60) && (amps < 510)) {
+    	// Set Duty Cycle:
     	mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM0A, amps / 6 );
+    	// Resume PWM Operation:
+    	mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM0A, MCPWM_DUTY_MODE_0 );
     	//print_timestamp();
-        //printf("Setting Control Pilot to %02d.%01d Amps, SDC4 = 0x%04X\r\n",amps/10, amps%10, SDC4);
+        printf("Setting Control Pilot to %02d.%01d Amps\r\n",amps/10, amps%10);
     } else {
+    	// Set Duty Cycle:
     	mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM0A, amps / 25 + 64 );
+    	// Resume PWM Operation:
+    	mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM0A, MCPWM_DUTY_MODE_0 );
     }
 }

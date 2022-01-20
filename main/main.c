@@ -33,6 +33,11 @@ void app_main(void)
 	CP_Set(100);
 
 	while (1) {
-		vTaskDelay( 500 / portTICK_PERIOD_MS);
+		CP_Set(100);
+		vTaskDelay( 1000 / portTICK_PERIOD_MS);
+		CP_Set(HIGH);
+		vTaskDelay( 1000 / portTICK_PERIOD_MS);
+		CP_Set(LOW);
+		vTaskDelay( 1000 / portTICK_PERIOD_MS);
 	}
 }
