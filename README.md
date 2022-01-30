@@ -1,4 +1,4 @@
-# ESP32 IDF IEC61851/SAE J1772 Demo Code
+# ESP32 IDF IEC61851/SAE J1772 EVSE
 
 ![Prototype EVSE Interface](https://www.beyondlogic.org/wp-content/uploads/2022/01/IEC61851-J1772-EVSE-PCB.png)
 
