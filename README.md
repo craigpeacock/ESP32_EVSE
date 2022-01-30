@@ -1,7 +1,7 @@
 # ESP32 IDF IEC61851/SAE J1772 Demo Code
 
-Source code intended for IEC61851/J1772 ChargePort Controller:
-https://circuitmaker.com/Projects/Details/Craig-Peacock-4/IEC61851-J1772-EVSE-Interface
+Source code intended for a Prototype IEC61851/J1772 EVSE Interface :
+https://www.beyondlogic.org/prototype-iec61851-j1772-evse-interface/
 
 The above interface is already working with a dsPIC33EP:
 https://github.com/craigpeacock/dsPIC33EP_IEC61851_J1772_ChargePort_EVSE/tree/main/EVSE.X
