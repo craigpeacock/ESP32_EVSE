@@ -26,10 +26,37 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #include "driver/gpio.h"
 #include "sdkconfig.h"
 #include "driver/mcpwm.h"
+#include "driver/gpio.h"
 #include "pwm.h"
+#include "soc/mcpwm_reg.h"
+#include "soc/mcpwm_struct.h"
+
+static void IRAM_ATTR mcpwm_isr_handler()
+{
+	if (MCPWM0.int_st.cmpr0_tea_int_st) {		// Falling Edge
+		gpio_set_level(GPIO_NUM_25, 1);
+		gpio_set_level(GPIO_NUM_25, 0);
+		MCPWM0.int_clr.cmpr0_tea_int_clr = 1; 	// Clear Flag
+	}
+
+	if (MCPWM0.int_st.cmpr0_teb_int_st) {		// Rising Edge
+		gpio_set_level(GPIO_NUM_25, 1);
+		gpio_set_level(GPIO_NUM_25, 0);
+		MCPWM0.int_clr.cmpr0_teb_int_clr = 1; 	// Clear Flag
+	}
+}
 
 void Init_PWM(void)
 {
+	gpio_config_t io_conf = {};
+
+	io_conf.intr_type = GPIO_INTR_DISABLE; 	   			// No interrupt
+	io_conf.pin_bit_mask = GPIO_SEL_25;					// Bit mask of the pins
+	io_conf.mode = GPIO_MODE_OUTPUT;					// Set as Input
+	io_conf.pull_up_en = 0;								// Enable pull-ups
+	io_conf.pull_down_en = 0;
+	gpio_config(&io_conf);								// Configure pin
+
 	ESP_ERROR_CHECK(mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM0A, GPIO_NUM_18));
 
     mcpwm_config_t pwm_config = {
@@ -40,6 +67,10 @@ void Init_PWM(void)
     };
 
     mcpwm_init(MCPWM_UNIT_0, MCPWM_TIMER_0, &pwm_config);
+
+    //MCPWM0.int_ena.cmpr0_tea_int_ena = 1;	// Interrupt when TEA Timer Equal reg A (Falling Edge)
+    MCPWM0.int_ena.cmpr0_teb_int_ena = 1;	// Interrupt when TEB Timer Equal reg B (Rising Edge)
+    mcpwm_isr_register(MCPWM_UNIT_0, mcpwm_isr_handler, NULL, ESP_INTR_FLAG_IRAM, NULL);
 }
 
 /*
