@@ -1,6 +1,6 @@
 /*
 ESP32 EVSE Demo Code
-IEC61851/SAE J1772 
+IEC61851/SAE J1772
 
 Copyright (C) 2022 Craig Peacock
 
@@ -16,28 +16,9 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 02110-1301, USA.
 */
 
-#include <stdio.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "sdkconfig.h"
-#include "pwm.h"
-#include "adc.h"
-
-#include "driver/mcpwm.h"
-
-void app_main(void)
-{
-	printf("ESP32 IEC61851/SAE J1772 Demo EVSE Code\r\n");
-	Init_ADC();
-	Init_PWM();
-	CP_Set(100);
-
-	while (1) {
-		printf("ADC = %dmV\r\n", CP_ReadAN());
-		vTaskDelay( 1000 / portTICK_PERIOD_MS);
-	}
-}
+void Init_ADC(void);
+uint32_t CP_ReadAN(void);
